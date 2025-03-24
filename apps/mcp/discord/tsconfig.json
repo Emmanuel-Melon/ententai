@@ -3,13 +3,13 @@
       "target": "ES2022",
       "module": "Node16",
       "moduleResolution": "Node16",
-      "outDir": "./build",
-      "rootDir": "./src",
+      "outDir": "../../apps/mcp/discord/build",
+      "rootDir": "../../apps/mcp/discord/src",
       "strict": true,
       "esModuleInterop": true,
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules"]
+    "include": ["../../apps/mcp/discord/src/**/*"],
+    "exclude": ["../../apps/mcp/discord/node_modules"]
   }

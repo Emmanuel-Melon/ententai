@@ -52,7 +52,7 @@ export const createDiscordClient = () => {
 const discord = createDiscordClient();
 
 export class DiscordService {
-    constructor() {}
+    constructor() { }
 
     async handleReady() {
         // Discord bot is ready
@@ -145,17 +145,17 @@ interface DiscordMessage {
 
 // Register tools
 server.tool(
-    'get-discord-messages', 
-    'Get messages from a particular Discord channel', 
-    { 
+    'get-discord-messages',
+    'Get messages from a particular Discord channel',
+    {
         channel: z.string().describe("The name of the Discord channel to fetch messages from (e.g., 'github', 'feedback')"),
         limit: z.number().min(1).max(100).optional().describe("Maximum number of messages to fetch (default: 25)")
-    }, 
+    },
     async ({ channel, limit = 25 }) => {
         try {
             // Get channel ID from the channel map
             const channelId = CHANNEL_MAP[channel];
-            
+
             if (!channelId) {
                 return {
                     content: [
@@ -166,10 +166,10 @@ server.tool(
                     ]
                 };
             }
-            
+
             // Get the channel messages
             const messages = await discordService.fetchChannelMessages(channelId, limit);
-            
+
             if (messages === null) {
                 return {
                     content: [
@@ -180,7 +180,7 @@ server.tool(
                     ]
                 };
             }
-            
+
             if (messages.length === 0) {
                 return {
                     content: [
@@ -191,7 +191,7 @@ server.tool(
                     ]
                 };
             }
-            
+
             // Get channel name for display
             let channelDisplayName = channel;
             try {
@@ -202,23 +202,23 @@ server.tool(
             } catch (error) {
                 // Error fetching channel info
             }
-            
+
             // Format messages for display
             const formattedMessages = messages.map((msg: DiscordMessage, index: number) => {
                 const authorInfo = `${msg.author.username}${msg.author.isBot ? ' [BOT]' : ''} (${msg.author.id})`;
                 const timestamp = new Date(msg.timestamp).toLocaleString();
                 let messageText = `[${index + 1}] ${authorInfo} - ${timestamp}\n${msg.content}`;
-                
+
                 if (msg.attachments.length > 0) {
                     messageText += `\nAttachments: ${msg.attachments.join(', ')}`;
                 }
-                
+
                 messageText += '\n---';
                 return messageText;
             }).join("\n\n");
-            
+
             const responseText = `Messages from #${channelDisplayName} (${channelId}):\n\n${formattedMessages}`;
-            
+
             return {
                 content: [
                     {

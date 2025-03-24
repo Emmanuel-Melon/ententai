@@ -1,0 +1,39 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY .env ./
+
+RUN npm ci
+
+COPY src ./src
+
+RUN npm run build
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/.env ./
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+ENV DISCORD_TOKEN= \
+    FEEDBACK_CHANNEL_ID= \
+    GITHUB_CHANNEL_ID= \
+    APP_ID= \
+    PUBLIC_KEY= \
+    GITHUB_TOKEN= \
+    REPO_OWNER= \
+    REPO_NAME= \
+    DISCORD_SERVER_ID= \
+    GENERAL_CHANNEL_ID=
+
+# Load environment variables from .env file
+CMD ["sh", "-c", "node -r dotenv/config build/index.js"]

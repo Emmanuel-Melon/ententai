@@ -6,9 +6,11 @@ Entent is an open-source platform that enables LLMs to access and interact with 
 
 The project has been broken down into several components:
 
-- `mcp/` - Contains implementation of various Model Control Protocol (MCP) servers
-  - `discord/` - MCP server for Discord integration
-  - Other service integrations (GitHub, Calendar, etc.)
+- `apps/` - Contains implementation of various services and applications
+  - `mcp/` - Model Control Protocol (MCP) servers
+    - `discord/` - MCP server for Discord integration
+    - `github/` - MCP server for GitHub integration
+    - Other service integrations (Calendar, etc.)
 - Additional components (coming soon)
 
 ## Model Control Protocol (MCP)
@@ -35,6 +37,15 @@ DISCORD_SERVER_ID=your_discord_server_id
 GENERAL_CHANNEL_ID=your_general_channel_id
 ```
 
+### GitHub MCP Server
+
+The GitHub MCP server enables LLMs to interact with GitHub repositories and issues. Configuration is managed through environment variables:
+```
+GITHUB_TOKEN=your_github_token
+REPO_OWNER=your_repo_owner
+REPO_NAME=your_repo_name
+```
+
 This is a skeleton implementation to demonstrate how MCP works. In the future, a management console will be deployed to simplify integration and workflow configuration.
 
 ## Running with Claude Desktop
@@ -56,12 +67,21 @@ To use Entent MCP servers with Claude Desktop:
    {
      "mcpServers": {
        "discord": {
-         "command": "uv",
+         "command": "npm",
          "args": [
-           "--directory",
-           "/ABSOLUTE/PATH/TO/PARENT/FOLDER/discord",
            "run",
-           "discord.js"
+           "start",
+           "--prefix",
+           "/ABSOLUTE/PATH/TO/apps/mcp/discord"
+         ]
+       },
+       "github": {
+         "command": "npm",
+         "args": [
+           "run",
+           "start",
+           "--prefix",
+           "/ABSOLUTE/PATH/TO/apps/mcp/github"
          ]
        }
      }
@@ -77,11 +97,17 @@ To use Entent MCP servers with Claude Desktop:
    npm install
    ```
 
-2. Configure environment variables for the discord server (see above)
+2. Configure environment variables for the desired MCP server (see above)
 
-3. Run the discord MCP server:
+3. Run an MCP server:
    ```
-   node mcp/discord/discord.js
+   # For Discord MCP
+   cd apps/mcp/discord
+   npm start
+
+   # For GitHub MCP
+   cd apps/mcp/github
+   npm start
    ```
 
-The server will start and be available for LLMs to connect and use its tools.
+The servers will start and be available for LLMs to connect and use their tools.
